@@ -42,7 +42,7 @@ for node in scheduler:
         print(f"Start {node.get_data()}.")
     else:
         print(f"End   {node.get_data()}.")
-'''
+```
 
 A possible output:
 
@@ -60,7 +60,7 @@ End A2
 End B2
 End A
 End B
-'''
+```
 
 Suppose your tasks know their time duration.
 Then, following this order, you can place them in a timeline.
@@ -121,7 +121,7 @@ class MyTaskClass:
 
     def pyority(self):
         return self.duration
-'''
+```
 
 There are two types of task nodes: `TaskStart` and `TaskEnd`.
 The default is that `TaskStart.pyority()` returns the result of calling
@@ -147,4 +147,4 @@ class MyTaskStart(TaskStart):
         return self.get_data().duration
 
 scheduler = Scheduler(task_start=MyTaskStart)
-'''
+```
