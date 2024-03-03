@@ -7,16 +7,16 @@ of some other.
 Pyority helps you to organize those *points in time*
 (start or end of some task) in such a way that you can
 iterate through them and populate them with information
-in a way consistent with their execution timeline.
+without inconsistencies.
 
 
 # Simple example
 
-Suppose we have task A, with subtasks A1 and A2.
-And A2 depends on A1.
-And we have task B, with subtasks B1 and B2.
-And B2 depends on B1.
-And suppose that task B depends on completion of task A1.
+Suppose we have task A, with subtasks A0 and A1.
+And A1 depends on A0.
+And we have task B, with subtasks B0 and B1.
+And B1 depends on B0.
+And suppose that task B depends on completion of task A0.
 
 ```python
 class MyTaskClass:
@@ -27,15 +27,15 @@ class MyTaskClass:
         return self.name
 
 
-A = MyTaksClass('A'), A1 = MyTaksClass('A1'), A2 = MyTaksClass('A2')
-B = MyTaksClass('B'), B1 = MyTaksClass('B1'), B2 = MyTaksClass('B2')
+A = MyTaksClass('A'), A0 = MyTaksClass('A0'), A1 = MyTaksClass('A1')
+B = MyTaksClass('B'), B0 = MyTaksClass('B0'), B1 = MyTaksClass('B1')
 
 scheduler = Scheduler()
-a, a1, a2 = scheduler.add_tasks(A, [A1, A2])
-b, b1, b2 = scheduler.add_tasks(B, [B1, B2])
-scheduler.add_dependency(a2, a1)
-scheduler.add_dependency(b2, b1)
-scheduler.add_dependency(b, a1)
+a = scheduler.add_task(A, [A0, A1])
+b = scheduler.add_task(B, [B0, B1])
+scheduler.add_dependency(a[1], a[0])
+scheduler.add_dependency(b[1], b[0])
+scheduler.add_dependency(b, a[0])
 
 for node in scheduler:
     if node.is_start:
@@ -49,38 +49,38 @@ A possible output:
 ```console
 $ python3 schedule.py
 Start A
-Start A1
-End   A1
+Start A0
+End   A0
 Start B
+Start B0
+Start A1
+End   B0
 Start B1
-Start A2
-End B1
-Start B2
-End A2
-End B2
-End A
-End B
+End   A1
+End   B1
+End   A
+End   B
 ```
 
 Suppose your tasks know their time duration.
 Then, following this order, you can place them in a timeline.
 You decide when the project starts. This is the start of A.
-It is also the start of A1.
-Since you know duration, you know when A1 finishes.
-Now, you know when B starts. You also know when B1 and A2 start.
-And since you know duration, you know when B1 ends.
-Now, you know when B2 starts.
-At last, you know when A2 and B2 end.
+It is also the start of A0.
+Since you know duration, you know when A0 finishes.
+Now, you know when B starts. You also know when B0 and A1 start.
+And since you know duration, you know when B0 ends.
+Now, you know when B1 starts.
+At last, you know when A1 and B1 end.
 And therefore, you know when A and B end.
 
-We didn't have to follow the order `Start B`, `Start B1`, `Start A2`.
-It could be `Start A2`, `Start B`, `Start B1`.
-Or even `Start B`, `Start A2`, `Start B1`!!!
+We didn't have to follow the order `Start B`, `Start B0`, `Start A1`.
+It could be `Start A1`, `Start B`, `Start B0`.
+Or even `Start B`, `Start A1`, `Start B0`!!!
 But `pyority` gives priority to nodes that have more stuff depending on them.
-Depend on `Start A2`: `End A2` and `End A`.
-Depend on `Start B`: `Start B1`, `Start B2`, `End B1`, `End B2` and `End B`.
+Depend on `Start A1`: `End A1` and `End A`.
+Depend on `Start B`: `Start B0`, `Start B1`, `End B0`, `End B1` and `End B`.
 
-Pyority will iterate through nodes in such an order that
+Pyority will iterate through nodes in an order such that
 you can populate the data in a consistent way.
 Notice that the iteration order `End A` and `End B` does not mean that
 task A needs to finish before task B.
@@ -100,13 +100,14 @@ We call the choosen quantity a *pyority*.
 The *total pyority* for a task is the sum of its *pyority* and
 the *pyority* of all tasks that depend on it.
 
-When the *total pyority* of two tasks are equal,
-we first iterate the node that has more nodes that depend
+When the *total pyority* of two nodes are equal,
+we first iterate the one that has more nodes that depend
 (directly or indirectly) on it.
 If they have the same dependent node count,
 the order is not specified and is implementation dependent.
 
 There are basically two ways to define a task's *piority*.
+
 
 ## Define a `pyority` method in `MyTaskClass`
 
