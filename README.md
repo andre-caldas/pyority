@@ -39,9 +39,9 @@ scheduler.add_dependency(b, a[0])
 
 for node in scheduler:
     if node.is_start:
-        print(f"Start {node.get_data()}.")
+        print(f"Start {node.data}.")
     else:
-        print(f"End   {node.get_data()}.")
+        print(f"End   {node.data}.")
 ```
 
 A possible output:
@@ -145,7 +145,7 @@ Here is an example.
 ```python
 class MyTaskStart(TaskStart):
     def pyority(self):
-        return self.get_data().duration
+        return self.data.duration
 
 scheduler = Scheduler(task_start=MyTaskStart)
 ```
