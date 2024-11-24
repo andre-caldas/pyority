@@ -86,7 +86,7 @@ class Graph:
         self.node_to_idx[node] = idx
         assert len(self.node_to_idx) == len(self.idx_to_node)
         # Resize matrix if needed
-        size = self.direct_dependencies.get_shape()[0]
+        size = self.direct_dependencies.shape[0]
         while size < self.n_nodes:
             size <<= 1
         self.direct_dependencies.resize(size, size)
